@@ -54,6 +54,10 @@ class NewsScreenState extends State<NewsScreen> {
               print("Adding to article list...");
               _news.addAll(snapshot.data);
             }
+            if (snapshot.hasError) {
+              //final SnackBar snackbar = SnackBar(content: Text(snapshot.error.toString()),);
+              //Scaffold.of(context).showSnackBar(snackbar);
+            }
             return _news != null && _news.isNotEmpty
                 ? Column(
                     children: <Widget>[
@@ -62,30 +66,39 @@ class NewsScreenState extends State<NewsScreen> {
                         margin: EdgeInsets.only(top: 4.0),
                         child: RefreshIndicator(
                           child: ListView.separated(
-
                             controller: _scrollController,
                             itemBuilder: (_, int index) {
                               return ArticleCard(_news[index]);
                             },
                             itemCount: _news.length,
-                            separatorBuilder: (BuildContext context, int index) {
+                            separatorBuilder:
+                                (BuildContext context, int index) {
                               if (index % 5 == 0) {
                                 return Column(
                                   children: <Widget>[
                                     Container(
-                                      padding: EdgeInsets.all(8.0),
+                                        padding: EdgeInsets.all(8.0),
                                         child: Text("Advertising")),
                                   ],
                                 );
                               }
-                              return Container(padding: EdgeInsets.symmetric(vertical: 4.0),);
+                              return Container(
+                                padding: EdgeInsets.symmetric(vertical: 4.0),
+                              );
                             },
-                          ), onRefresh: _handleRefresh,
+                          ),
+                          onRefresh: _handleRefresh,
                         ),
                       )),
                       Divider(
                         height: 1.0,
                       ),
+                      snapshot.hasError
+                          ? Container(
+                          padding: EdgeInsets.symmetric(vertical: 4.0),
+                          child: Text(
+                              snapshot.error.toString().split(":").last))
+                          : Container(),
                       Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0),
                           child: Row(
@@ -145,43 +158,52 @@ class ArticleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       clipBehavior: Clip.antiAlias,
-        // padding: EdgeInsets.all(8.0),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ArticleScreen(article)));
-          },
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              CachedNetworkImage(
-                  imageUrl: article.imageUrl ?? "https://via.placeholder.com/100",
-                  placeholder: (context, url) => Center(
-                      child: Container(
-                    child: CircularProgressIndicator(),
-                  )),
-                  errorWidget: (context, url, error) => Container(child: Icon(Icons.error), width: 100,),
-                  width: 100,
-                fit: BoxFit.fitWidth,
-                ),
-              Flexible(
+      // padding: EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ArticleScreen(article)));
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            CachedNetworkImage(
+              imageUrl: article.imageUrl ?? "https://via.placeholder.com/100",
+              placeholder: (context, url) => Center(
+                  child: Container(
                 child: Container(
-                    padding: EdgeInsets.all(4.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Text(
-                          article.title,
-                        ),
-                        Text(DateFormat("yyyy-MM-dd").format(article.publishedAt),
-                            style: TextStyle(color: Colors.grey, fontSize: 12), textAlign: TextAlign.end,)
-                      ],
-                    )),
+                  child: CircularProgressIndicator(),
+                  padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
+                ),
+              )),
+              errorWidget: (context, url, error) => Container(
+                child: Icon(Icons.error),
+                width: 100,
               ),
-            ],
-          ),
+              width: 100,
+              fit: BoxFit.fitWidth,
+            ),
+            Flexible(
+              child: Container(
+                  padding: EdgeInsets.all(4.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        article.title,
+                      ),
+                      Text(
+                        DateFormat("yyyy-MM-dd").format(article.publishedAt),
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                        textAlign: TextAlign.end,
+                      )
+                    ],
+                  )),
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 }

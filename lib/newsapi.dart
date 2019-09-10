@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -24,6 +25,9 @@ class NewsAPI {
       var listJson = data["articles"] as List;
       list = listJson.map<Article>((json) => Article.fromJson(json)).toList();
       lastPage = page;
+    } else {
+      if (response.statusCode == 426) throw new HttpException("Reached maximum articles of NewsAPI's free plan");
+      throw new HttpException("Could not get articles from NewsAPI :(");
     }
     return list;
   }
