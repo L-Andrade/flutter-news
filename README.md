@@ -17,14 +17,14 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Features
 
-Infinite scrolling of articles - the solution used for this could be better implemented. Might revisit in the future.
-Query articles by text input.
-Click an article for more information.
-Go to article page, with alert dialog confirmation.
+* Infinite scrolling of articles - the solution used for this could be better implemented. Might revisit in the future.
+* Query articles by text input.
+* Click an article for more information.
+* Go to article page, with alert dialog confirmation.
 
 
 ## To-dos:
 
-Offline support.
-Better article layout.
-Overall improvements.
+* Offline support.
+* Better article layout.
+* Overall improvements.
