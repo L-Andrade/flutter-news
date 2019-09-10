@@ -1,6 +1,6 @@
 # flutternews
 
-A new Flutter application.
+An app feeding off NewsAPI. It's my first Flutter app after doing Google's Codelabs (available below).
 
 ## Getting Started
 
@@ -14,3 +14,17 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Features
+
+Infinite scrolling of articles - the solution used for this could be better implemented. Might revisit in the future.
+Query articles by text input.
+Click an article for more information.
+Go to article page, with alert dialog confirmation.
+
+
+## To-dos:
+
+Offline support.
+Better article layout.
+Overall improvements.
