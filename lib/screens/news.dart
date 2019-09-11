@@ -54,10 +54,6 @@ class NewsScreenState extends State<NewsScreen> {
               print("Adding to article list...");
               _news.addAll(snapshot.data);
             }
-            if (snapshot.hasError) {
-              //final SnackBar snackbar = SnackBar(content: Text(snapshot.error.toString()),);
-              //Scaffold.of(context).showSnackBar(snackbar);
-            }
             return _news != null && _news.isNotEmpty
                 ? Column(
                     children: <Widget>[
@@ -97,7 +93,7 @@ class NewsScreenState extends State<NewsScreen> {
                           ? Container(
                           padding: EdgeInsets.symmetric(vertical: 4.0),
                           child: Text(
-                              snapshot.error.toString().split(":").last))
+                              snapshot.error.toString()))
                           : Container(),
                       Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0),
@@ -182,7 +178,7 @@ class ArticleCard extends StatelessWidget {
                 width: 100,
               ),
               width: 100,
-              fit: BoxFit.fitWidth,
+              fit: BoxFit.cover,
             ),
             Flexible(
               child: Container(

@@ -1,6 +1,5 @@
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -19,15 +18,18 @@ class NewsAPI {
     print("Getting page $page...");
     var get = _url + "everything?q=$query&apiKey=$_apiKey&page=${page.toString()}&$_sortBy";
     List<Article> list;
-    http.Response response = await http.get(get, headers: {"Accept": "application/json"});
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      var listJson = data["articles"] as List;
-      list = listJson.map<Article>((json) => Article.fromJson(json)).toList();
-      lastPage = page;
-    } else {
-      if (response.statusCode == 426) throw new HttpException("Reached maximum articles of NewsAPI's free plan");
-      throw new HttpException("Could not get articles from NewsAPI :(");
+    try {
+      http.Response response = await http.get(get, headers: {"Accept": "application/json"});
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        var listJson = data["articles"] as List;
+        list = listJson.map<Article>((json) => Article.fromJson(json)).toList();
+        lastPage = page;
+      } else {
+        throw Exception();
+      }
+    } catch (ex){
+      throw "Could not get articles from NewsAPI :(";
     }
     return list;
   }
