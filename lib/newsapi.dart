@@ -15,7 +15,6 @@ class NewsAPI {
 
   Future loadNewsByPage(int page) async {
     if (lastPage == page) return null;
-    print("Getting page $page...");
     var get = _url + "everything?q=$query&apiKey=$_apiKey&page=${page.toString()}&$_sortBy";
     List<Article> list;
     try {

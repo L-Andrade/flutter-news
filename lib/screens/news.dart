@@ -32,7 +32,6 @@ class NewsScreenState extends State<NewsScreen> {
       if (_scrollController.offset >=
               _scrollController.position.maxScrollExtent &&
           !_scrollController.position.outOfRange) {
-        print("Increment page");
         setState(() {
           _page++;
         });
@@ -51,7 +50,6 @@ class NewsScreenState extends State<NewsScreen> {
           builder: (context, snapshot) {
             if (snapshot.data != null &&
                 snapshot.connectionState == ConnectionState.done) {
-              print("Adding to article list...");
               _news.addAll(snapshot.data);
             }
             return _news != null && _news.isNotEmpty
@@ -91,9 +89,8 @@ class NewsScreenState extends State<NewsScreen> {
                       ),
                       snapshot.hasError
                           ? Container(
-                          padding: EdgeInsets.symmetric(vertical: 4.0),
-                          child: Text(
-                              snapshot.error.toString()))
+                              padding: EdgeInsets.symmetric(vertical: 4.0),
+                              child: Text(snapshot.error.toString()))
                           : Container(),
                       Container(
                           margin: EdgeInsets.symmetric(horizontal: 4.0),
@@ -117,9 +114,23 @@ class NewsScreenState extends State<NewsScreen> {
                           )),
                     ],
                   )
-                : Center(
-                    child: CircularProgressIndicator(),
-                  );
+                : snapshot.hasError
+                    ? Center(child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(snapshot.error.toString()),
+                          RaisedButton(
+                            onPressed: () {
+                              _resetNews();
+                            },
+                            child: Text("Retry"),
+                          ),
+                        ],
+                      ),)
+                    : Center(
+                        child: CircularProgressIndicator(),
+                      );
           },
         ));
   }
