@@ -55,35 +55,7 @@ class NewsScreenState extends State<NewsScreen> {
             return _news != null && _news.isNotEmpty
                 ? Column(
                     children: <Widget>[
-                      Expanded(
-                          child: Container(
-                        margin: EdgeInsets.only(top: 4.0),
-                        child: RefreshIndicator(
-                          child: ListView.separated(
-                            controller: _scrollController,
-                            itemBuilder: (_, int index) {
-                              return ArticleCard(_news[index]);
-                            },
-                            itemCount: _news.length,
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              if (index % 5 == 0) {
-                                return Column(
-                                  children: <Widget>[
-                                    Container(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text("Advertising")),
-                                  ],
-                                );
-                              }
-                              return Container(
-                                padding: EdgeInsets.symmetric(vertical: 4.0),
-                              );
-                            },
-                          ),
-                          onRefresh: _handleRefresh,
-                        ),
-                      )),
+                      Expanded(child: _buildListView()),
                       Divider(
                         height: 1.0,
                       ),
@@ -92,42 +64,11 @@ class NewsScreenState extends State<NewsScreen> {
                               padding: EdgeInsets.symmetric(vertical: 4.0),
                               child: Text(snapshot.error.toString()))
                           : Container(),
-                      Container(
-                          margin: EdgeInsets.symmetric(horizontal: 4.0),
-                          child: Row(
-                            children: <Widget>[
-                              Flexible(
-                                child: TextField(
-                                  controller: _textController,
-                                  autofocus: false,
-                                ),
-                              ),
-                              Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 4.0),
-                                  child: IconButton(
-                                    icon: Icon(Icons.search),
-                                    onPressed: () {
-                                      _submitQuery(_textController.text);
-                                    },
-                                  ))
-                            ],
-                          )),
+                      _buildSearchBar(),
                     ],
                   )
                 : snapshot.hasError
-                    ? Center(child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(snapshot.error.toString()),
-                          RaisedButton(
-                            onPressed: () {
-                              _resetNews();
-                            },
-                            child: Text("Retry"),
-                          ),
-                        ],
-                      ),)
+                    ? _buildErrorRetry(snapshot.error.toString())
                     : Center(
                         child: CircularProgressIndicator(),
                       );
@@ -153,6 +94,76 @@ class NewsScreenState extends State<NewsScreen> {
     _newsAPI.resetPage();
     _resetNews();
     return null;
+  }
+
+  _buildListView() {
+    return Container(
+      margin: EdgeInsets.only(top: 4.0),
+      child: RefreshIndicator(
+        child: ListView.separated(
+          controller: _scrollController,
+          itemBuilder: (_, int index) {
+            return ArticleCard(_news[index]);
+          },
+          itemCount: _news.length,
+          separatorBuilder: (BuildContext context, int index) {
+            if (index % 5 == 0) {
+              return Column(
+                children: <Widget>[
+                  Container(
+                      padding: EdgeInsets.all(8.0), child: Text("Advertising")),
+                ],
+              );
+            }
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 4.0),
+            );
+          },
+        ),
+        onRefresh: _handleRefresh,
+      ),
+    );
+  }
+
+  _buildSearchBar() {
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 4.0),
+        child: Row(
+          children: <Widget>[
+            Flexible(
+              child: TextField(
+                controller: _textController,
+                autofocus: false,
+              ),
+            ),
+            Container(
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
+                child: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    _submitQuery(_textController.text);
+                  },
+                ))
+          ],
+        ));
+  }
+
+  _buildErrorRetry(String error) {
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(error),
+          RaisedButton(
+            onPressed: () {
+              _resetNews();
+            },
+            child: Text("Retry"),
+          ),
+        ],
+      ),
+    );
   }
 }
 
