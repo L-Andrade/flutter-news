@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../main.dart';
 import '../newsapi.dart';
 import '../newsmodel.dart';
 import 'article.dart';
@@ -186,8 +187,9 @@ class ArticleCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            article.imageUrl != null ?
             CachedNetworkImage(
-              imageUrl: article.imageUrl ?? "https://via.placeholder.com/100",
+              imageUrl: article.imageUrl,
               placeholder: (context, url) => Center(
                   child: Container(
                 child: Container(
@@ -195,13 +197,10 @@ class ArticleCard extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
                 ),
               )),
-              errorWidget: (context, url, error) => Container(
-                child: Icon(Icons.error),
-                width: 100,
-              ),
+              errorWidget: (context, url, error) => buildErrorIcon(),
               width: 100,
               fit: BoxFit.cover,
-            ),
+            ) : buildErrorIcon(),
             Flexible(
               child: Container(
                   padding: EdgeInsets.all(4.0),

@@ -18,3 +18,9 @@ class NewsApp extends StatelessWidget {
   }
 }
 
+buildErrorIcon() {
+  return Container(
+    child: Icon(Icons.error),
+    width: 100,
+  );
+}

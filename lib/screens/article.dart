@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutternews/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../newsmodel.dart';
 
@@ -17,15 +18,16 @@ class ArticleScreen extends StatelessWidget {
           children: <Widget>[
             Row(
               children: <Widget>[
+                _article.imageUrl != null ?
                 Expanded(
                     child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   // padding: EdgeInsets.symmetric(vertical: 8.0),
                   child: Image.network(
-                    _article.imageUrl ?? "https://via.placeholder.com/200",
+                    _article.imageUrl,
                     height: 200,
                   ),
-                )),
+                )) : Container(child: buildErrorIcon(), height: 200,),
               ],
             ),
             Container(
