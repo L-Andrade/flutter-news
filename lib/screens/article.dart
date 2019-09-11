@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutternews/main.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../newsmodel.dart';
 
@@ -18,26 +19,42 @@ class ArticleScreen extends StatelessWidget {
           children: <Widget>[
             Row(
               children: <Widget>[
-                _article.imageUrl != null ?
-                Expanded(
-                    child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  // padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Image.network(
-                    _article.imageUrl,
-                    height: 200,
-                  ),
-                )) : Container(child: buildErrorIcon(), height: 200,),
+                _article.imageUrl != null
+                    ? Expanded(
+                        child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        // padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Image.network(
+                          _article.imageUrl,
+                          height: 200,
+                        ),
+                      ))
+                    : Container(
+                        child: buildErrorIcon(),
+                        height: 200,
+                      ),
               ],
             ),
-            Container(
-              padding: EdgeInsets.all(8.0),
-              child: Text(_article.author == null
-                  ? "Written for ${_article.source.name}"
-                  : "Written by ${_article.author} from ${_article.source.name}."),
+            Card(
+              margin: EdgeInsets.all(8.0),
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  _article.author == null
+                      ? "Written for ${_article.source.name}"
+                      : "Written by ${_article.author} from ${_article.source.name}.",
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
             Container(
-                padding: EdgeInsets.all(8.0),
+              child: Text(
+                "${DateFormat("yyyy-MM-dd HH:mm").format(_article.publishedAt)}",
+                style: TextStyle(fontSize: 12),
+              ),
+            ),
+            Container(
+                padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
                 child: Text(_article.description)),
             RaisedButton(
                 onPressed: () {
@@ -47,7 +64,7 @@ class ArticleScreen extends StatelessWidget {
                         return AlertDialog(
                           title: Text("Leaving News App"),
                           content: Text(
-                              "Are you sure you want to visit ${_article.url}?"),
+                              'Are you sure you want to visit "${_article.url}"?'),
                           actions: <Widget>[
                             FlatButton(
                               child: Text("Close"),
