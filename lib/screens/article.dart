@@ -30,6 +30,7 @@ class ArticleScreen extends StatelessWidget {
                             Image.network(
                               _article.imageUrl,
                               fit: BoxFit.fitHeight,
+                              height: 200,
                             ),
                             Container(
                               padding: EdgeInsets.all(8.0),

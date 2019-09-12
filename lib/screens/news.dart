@@ -10,9 +10,13 @@ import 'article.dart';
 import 'package:intl/intl.dart';
 
 class NewsScreen extends StatefulWidget {
+  final String sourcesQuery;
+
+  NewsScreen({this.sourcesQuery});
+
   @override
   State<StatefulWidget> createState() {
-    return NewsScreenState();
+    return NewsScreenState(sourcesQuery);
   }
 }
 
@@ -22,6 +26,10 @@ class NewsScreenState extends State<NewsScreen> {
   ScrollController _scrollController;
   int _page = 1;
   TextEditingController _textController;
+  String sourcesQuery;
+
+
+  NewsScreenState(this.sourcesQuery);
 
   @override
   void initState() {
@@ -50,11 +58,11 @@ class NewsScreenState extends State<NewsScreen> {
             IconButton(icon: Icon(Icons.list), onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => SourcesScreen()));
-            },)
+            }, tooltip: "Sources",)
           ],
         ),
         body: FutureBuilder(
-          future: _newsAPI.loadNewsByPage(_page),
+          future: sourcesQuery == null ? _newsAPI.loadNewsByPage(_page) : _newsAPI.loadNewsByPageAndSource(_page, sourcesQuery),
           builder: (context, snapshot) {
             if (snapshot.data != null &&
                 snapshot.connectionState == ConnectionState.done) {
@@ -88,8 +96,8 @@ class NewsScreenState extends State<NewsScreen> {
 
   _submitQuery(String text) {
     if (text.length < 1) return;
-    // _textController.clear();
-    _newsAPI.query = text;
+    // _textController.clear()
+    _newsAPI.setQuery(text);
     _resetNews();
   }
 

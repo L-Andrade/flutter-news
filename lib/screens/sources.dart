@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutternews/screens/news.dart';
 import '../main.dart';
 import '../newsapi.dart';
 import '../newsmodel.dart';
@@ -18,12 +19,11 @@ class SourcesScreenState extends State<SourcesScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     _newsAPI = NewsAPI();
     _sources = <Source>[];
-    _textEditingController = TextEditingController();
+    _textEditingController = TextEditingController(text: _newsAPI.query);
   }
 
   @override
@@ -37,7 +37,7 @@ class SourcesScreenState extends State<SourcesScreen> {
           builder: (context, snapshot) {
             if (snapshot.data != null &&
                 snapshot.connectionState == ConnectionState.done) {
-              _sources.addAll(snapshot.data);
+              _sources = snapshot.data;
             }
             return _sources != null && _sources.isNotEmpty
                 ? Column(
@@ -97,7 +97,7 @@ class SourcesScreenState extends State<SourcesScreen> {
     return Text(err);
   }
 
-  resetSources(){
+  resetSources() {
     setState(() {
       _sources = <Source>[];
     });
@@ -109,9 +109,9 @@ class SourcesScreenState extends State<SourcesScreen> {
   }
 
   _submitQuery(String text) {
-      if (text.length < 1) return;
-      resetSources();
-      _newsAPI.setQuery(text);
+    if (text.length < 1) return;
+    resetSources();
+    _newsAPI.setQuery(text);
   }
 }
 
@@ -122,12 +122,15 @@ class SourceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        // Go to source articles
-      },
-      child: Card(
-        margin: EdgeInsets.all(8.0),
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      margin: EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: () {
+          // Go to source articles
+          Navigator.push(context,
+          MaterialPageRoute(builder: (context) => NewsScreen(sourcesQuery: _source.id)));
+        },
         child: Container(
           padding: EdgeInsets.all(8.0),
           child: Column(
