@@ -33,6 +33,24 @@ class NewsAPI {
     return list;
   }
 
+  Future loadSources() async {
+    var get = _url + "sources?apiKey=$_apiKey&category=$query";
+    List<Source> list;
+    try {
+      http.Response response = await http.get(get, headers: {"Accept": "application/json"});
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        var listJson = data["sources"] as List;
+        list = listJson.map<Source>((json) => Source.fromFullJson(json)).toList();
+      } else {
+        throw Exception();
+      }
+    } catch (ex){
+      throw "Could not get sources from NewsAPI :(";
+    }
+    return list;
+  }
+
   setQuery(String text) {
     resetPage();
     query = text;

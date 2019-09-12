@@ -24,3 +24,28 @@ buildErrorIcon() {
     width: 100,
   );
 }
+
+buildSearchBar(
+    TextEditingController textController, Null Function(String text) callback) {
+  return Container(
+      color: Colors.white,
+      margin: EdgeInsets.symmetric(horizontal: 4.0),
+      child: Row(
+        children: <Widget>[
+          Flexible(
+            child: TextField(
+              controller: textController,
+              autofocus: false,
+            ),
+          ),
+          Container(
+              margin: EdgeInsets.symmetric(horizontal: 4.0),
+              child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  callback(textController.text);
+                },
+              ))
+        ],
+      ));
+}

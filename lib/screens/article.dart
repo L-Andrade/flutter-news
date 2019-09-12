@@ -18,15 +18,29 @@ class ArticleScreen extends StatelessWidget {
         body: Column(
           children: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 _article.imageUrl != null
                     ? Expanded(
-                        child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        // padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Image.network(
-                          _article.imageUrl,
-                          height: 200,
+                        child: Card(
+                        clipBehavior: Clip.antiAlias,
+                        margin: EdgeInsets.all(8.0),
+                        child: Column(
+                          children: <Widget>[
+                            Image.network(
+                              _article.imageUrl,
+                              fit: BoxFit.fitHeight,
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                _article.author == null
+                                    ? "Written for ${_article.source.name}"
+                                    : "Written by ${_article.author} from ${_article.source.name}.",
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
                         ),
                       ))
                     : Container(
@@ -35,28 +49,17 @@ class ArticleScreen extends StatelessWidget {
                       ),
               ],
             ),
-            Card(
-              margin: EdgeInsets.all(8.0),
-              child: Container(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  _article.author == null
-                      ? "Written for ${_article.source.name}"
-                      : "Written by ${_article.author} from ${_article.source.name}.",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
             Container(
               child: Text(
                 "${DateFormat("yyyy-MM-dd HH:mm").format(_article.publishedAt)}",
-                style: TextStyle(fontSize: 12),
+                style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ),
             Container(
-                padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+                padding: EdgeInsets.all(8.0),
                 child: Text(_article.description)),
             RaisedButton(
+                color: Colors.white,
                 onPressed: () {
                   showDialog(
                       context: context,

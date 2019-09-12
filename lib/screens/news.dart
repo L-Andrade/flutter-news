@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutternews/screens/sources.dart';
 
 import '../main.dart';
 import '../newsapi.dart';
@@ -45,6 +46,12 @@ class NewsScreenState extends State<NewsScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('News'),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.list), onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SourcesScreen()));
+            },)
+          ],
         ),
         body: FutureBuilder(
           future: _newsAPI.loadNewsByPage(_page),
@@ -65,7 +72,9 @@ class NewsScreenState extends State<NewsScreen> {
                               padding: EdgeInsets.symmetric(vertical: 4.0),
                               child: Text(snapshot.error.toString()))
                           : Container(),
-                      _buildSearchBar(),
+                      buildSearchBar(_textController, (String text) {
+                        _submitQuery(text);
+                      }),
                     ],
                   )
                 : snapshot.hasError
@@ -80,7 +89,7 @@ class NewsScreenState extends State<NewsScreen> {
   _submitQuery(String text) {
     if (text.length < 1) return;
     // _textController.clear();
-    _newsAPI.setQuery(text);
+    _newsAPI.query = text;
     _resetNews();
   }
 
@@ -126,28 +135,6 @@ class NewsScreenState extends State<NewsScreen> {
     );
   }
 
-  _buildSearchBar() {
-    return Container(
-        margin: EdgeInsets.symmetric(horizontal: 4.0),
-        child: Row(
-          children: <Widget>[
-            Flexible(
-              child: TextField(
-                controller: _textController,
-                autofocus: false,
-              ),
-            ),
-            Container(
-                margin: EdgeInsets.symmetric(horizontal: 4.0),
-                child: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    _submitQuery(_textController.text);
-                  },
-                ))
-          ],
-        ));
-  }
 
   _buildErrorRetry(String error) {
     return Center(
@@ -197,18 +184,21 @@ class ArticleCard extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
                 ),
               )),
-              errorWidget: (context, url, error) => buildErrorIcon(),
+              errorWidget: (context, url, error) => Container(child: buildErrorIcon(), height: 80,),
               width: 100,
+              height: 80,
               fit: BoxFit.cover,
-            ) : buildErrorIcon(),
+            ) : Container(child: buildErrorIcon(), height: 80,),
             Flexible(
               child: Container(
-                  padding: EdgeInsets.all(4.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Text(
                         article.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         DateFormat("yyyy-MM-dd").format(article.publishedAt),
