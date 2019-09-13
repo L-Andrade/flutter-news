@@ -91,7 +91,8 @@ class NewsScreenState extends State<NewsScreen> {
                             ),
                             snapshot.hasError
                                 ? Container(
-                                    padding: EdgeInsets.symmetric(vertical: 4.0),
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 4.0),
                                     child: Text(snapshot.error.toString()))
                                 : Container(),
                             buildSearchBar(_textController, (String text) {
@@ -184,7 +185,7 @@ class HeadlinesCarousel extends StatelessWidget {
             ? Column(
                 children: <Widget>[
                   Container(
-                    height: 100,
+                      height: 100,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: _headlines.length,
@@ -271,38 +272,38 @@ class ArticleHeadline extends StatelessWidget {
       child: Card(
         clipBehavior: Clip.antiAlias,
         margin: EdgeInsets.all(8.0),
-        child:  Container(
+        child: Container(
           child: buildImageOrError(_article.imageUrl),
-          ),
         ),
+      ),
     );
   }
 }
 
 navigateToArticle(BuildContext context, Article article) {
-  Navigator.push(context,
-      MaterialPageRoute(builder: (context) => ArticleScreen(article)));
+  Navigator.push(
+      context, MaterialPageRoute(builder: (context) => ArticleScreen(article)));
 }
 
 buildImage(String imageUrl) {
   return CachedNetworkImage(
     imageUrl: imageUrl,
     placeholder: (context, url) =>
-        Center(
-            child: Container(
-              child: Container(
-                child: CircularProgressIndicator(),
-                padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
-              ),
-            )),
-    errorWidget: (context, url, error) =>
-        Container(
-          child: buildErrorIcon(),
-          height: 80,
-        ),
-    width: 100,
-    height: 80,
-    fit: BoxFit.cover,
+      Center(
+        child: Container(
+          child: Container(
+            child: CircularProgressIndicator(),
+            padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
+          ),
+        )
+      ),
+      errorWidget: (context, url, error) => Container(
+        child: buildErrorIcon(),
+        height: 80,
+      ),
+      width: 100,
+      height: 80,
+      fit: BoxFit.cover,
   );
 }
 
@@ -310,7 +311,7 @@ buildImageOrError(String imageUrl) {
   return imageUrl != null
       ? buildImage(imageUrl)
       : Container(
-    child: buildErrorIcon(),
-    height: 80,
-  );
+          child: buildErrorIcon(),
+          height: 80,
+        );
 }

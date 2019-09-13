@@ -58,7 +58,7 @@ class ArticleScreen extends StatelessWidget {
             ),
             Container(
                 padding: EdgeInsets.all(8.0),
-                child: Text(_article.description)),
+                child: Text(_article.description ?? "No description available")),
             RaisedButton(
                 color: Colors.white,
                 onPressed: () {
