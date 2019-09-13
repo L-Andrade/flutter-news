@@ -49,3 +49,21 @@ buildSearchBar(
         ],
       ));
 }
+
+buildErrorRetry(String err, Null Function() callback) {
+  return Center(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(err),
+        RaisedButton(
+          onPressed: () {
+            callback();
+          },
+          child: Text("Retry"),
+        ),
+      ],
+    ),
+  );
+}

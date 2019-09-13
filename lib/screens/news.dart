@@ -143,24 +143,13 @@ class NewsScreenState extends State<NewsScreen> {
     );
   }
 
-
-  _buildErrorRetry(String error) {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(error),
-          RaisedButton(
-            onPressed: () {
-              _resetNews();
-            },
-            child: Text("Retry"),
-          ),
-        ],
-      ),
-    );
+  _buildErrorRetry(String err){
+    return buildErrorRetry(err, () {
+      _resetNews();
+    });
   }
+
+
 }
 
 class ArticleCard extends StatelessWidget {

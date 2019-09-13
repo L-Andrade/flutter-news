@@ -17,7 +17,6 @@ class NewsAPI {
   Future loadNewsByPage(int page) async {
     if (lastPage == page) return null;
     var get = _url + "everything?q=$query&apiKey=$_apiKey&page=${page.toString()}&$_sortBy&sources=$sourcesQuery";
-    print(get);
     List<Article> list;
     try {
       http.Response response = await http.get(get, headers: {"Accept": "application/json"});
@@ -41,12 +40,12 @@ class NewsAPI {
     List<Source> list;
     try {
       http.Response response = await http.get(get, headers: {"Accept": "application/json"});
+      print("${response.statusCode}: ${response.reasonPhrase}");
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         var listJson = data["sources"] as List;
         list = listJson.map<Source>((json) => Source.fromFullJson(json)).toList();
       } else {
-        print("${response.statusCode}: ${response.reasonPhrase}");
         throw Exception();
       }
     } catch (ex){

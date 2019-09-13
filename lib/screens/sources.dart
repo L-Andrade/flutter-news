@@ -56,8 +56,8 @@ class SourcesScreenState extends State<SourcesScreen> {
                       }),
                     ],
                   )
-                : snapshot.hasError
-                    ? _buildErrorRetry(snapshot.error.toString())
+                : (snapshot.hasError) || (_sources.isEmpty && snapshot.connectionState == ConnectionState.done)
+                    ? _buildErrorRetry(snapshot.error ?? "No sources found")
                     : Center(
                         child: CircularProgressIndicator(),
                       );
@@ -94,23 +94,25 @@ class SourcesScreenState extends State<SourcesScreen> {
   }
 
   _buildErrorRetry(String err) {
-    return Text(err);
+    return buildErrorRetry(err, () {
+      _resetSources();
+    });
   }
 
-  resetSources() {
+  _resetSources() {
     setState(() {
       _sources = <Source>[];
     });
   }
 
   Future<void> _handleRefresh() {
-    resetSources();
+    _resetSources();
     return null;
   }
 
   _submitQuery(String text) {
-    if (text.length < 1) return;
-    resetSources();
+    // if (text.length < 1) return;
+    _resetSources();
     _newsAPI.setQuery(text);
   }
 }
@@ -128,8 +130,10 @@ class SourceCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           // Go to source articles
-          Navigator.push(context,
-          MaterialPageRoute(builder: (context) => NewsScreen(sourcesQuery: _source.id)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => NewsScreen(sourcesQuery: _source.id)));
         },
         child: Container(
           padding: EdgeInsets.all(8.0),
