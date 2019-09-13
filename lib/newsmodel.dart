@@ -10,6 +10,12 @@ class Article {
   Article({this.title, this.author, this.source, this.imageUrl, this.description, this.url, this.publishedAt});
 
   factory Article.fromJson(Map<String, dynamic> json) {
+    DateTime date;
+    try {
+      date = DateTime.parse(json["publishedAt"]);
+    } catch (ex) {
+      date = DateTime.now();
+    }
     return Article(
       source: Source.fromJson(json["source"]),
       author: json["author"],
@@ -19,7 +25,7 @@ class Article {
       imageUrl: json["urlToImage"],
       description: json["description"],
       url: json["url"],
-      publishedAt: DateTime.parse(json["publishedAt"])
+      publishedAt: date
     );
   }
 
