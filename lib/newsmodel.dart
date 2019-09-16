@@ -38,7 +38,7 @@ class Source {
   String url;
 
   Source({this.id, this.name});
-  Source.fullSource({this.id, this.name, this.description, this.url});
+  Source.full({this.id, this.name, this.description, this.url});
 
   factory Source.fromJson(Map<String, dynamic> json){
     return Source(
@@ -48,7 +48,7 @@ class Source {
   }
 
   factory Source.fromFullJson(Map<String, dynamic> json){
-    return Source.fullSource(
+    return Source.full(
         id: json['id'],
         name: json['name'],
         description: json['description'],

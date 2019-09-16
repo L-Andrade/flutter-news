@@ -231,7 +231,7 @@ class ArticleCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            buildImageOrError(article.imageUrl),
+            buildImageOrError(article.imageUrl, 100, 80),
             Flexible(
               child: Container(
                   padding: EdgeInsets.all(8.0),
@@ -265,15 +265,27 @@ class ArticleHeadline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        navigateToArticle(context, _article);
-      },
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        margin: EdgeInsets.all(8.0),
-        child: Container(
-          child: buildImageOrError(_article.imageUrl),
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      margin: EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: () {
+          navigateToArticle(context, _article);
+        },
+        child: Stack(
+          children: <Widget>[
+            buildImageOrError(_article.imageUrl, 148, 84, withOpacity: true),
+            Container(
+                width: 148,
+                padding: EdgeInsets.all(8.0),
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  _article.title,
+                  style: TextStyle(color: Colors.white),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                ))
+          ],
         ),
       ),
     );
@@ -285,33 +297,36 @@ navigateToArticle(BuildContext context, Article article) {
       context, MaterialPageRoute(builder: (context) => ArticleScreen(article)));
 }
 
-buildImage(String imageUrl) {
-  return CachedNetworkImage(
-    imageUrl: imageUrl,
-    placeholder: (context, url) =>
-      Center(
-        child: Container(
-          child: Container(
-            child: CircularProgressIndicator(),
-            padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
-          ),
-        )
+buildImage(String imageUrl, double width, double height, {bool withOpacity = false}) {
+  return Stack(
+    children: <Widget>[
+      CachedNetworkImage(
+        imageUrl: imageUrl,
+        placeholder: (context, url) => Center(
+            child: Container(
+              child: Container(
+                child: CircularProgressIndicator(),
+                padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
+              ),
+            )),
+        errorWidget: (context, url, error) => Container(
+          child: buildErrorIcon(),
+          height: height,
+        ),
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
       ),
-      errorWidget: (context, url, error) => Container(
-        child: buildErrorIcon(),
-        height: 80,
-      ),
-      width: 100,
-      height: 80,
-      fit: BoxFit.cover,
+      withOpacity ? Container(color: Colors.black.withOpacity(0.7), width: width, height: height,) : Container()
+    ],
   );
 }
 
-buildImageOrError(String imageUrl) {
+buildImageOrError(String imageUrl, double width, double height, {bool withOpacity = false}) {
   return imageUrl != null
-      ? buildImage(imageUrl)
+      ? buildImage(imageUrl, width, height, withOpacity: withOpacity)
       : Container(
           child: buildErrorIcon(),
-          height: 80,
+          height: height,
         );
 }
