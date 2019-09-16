@@ -9,18 +9,47 @@ import 'article.dart';
 
 import 'package:intl/intl.dart';
 
-class NewsScreen extends StatefulWidget {
-  final String sourcesQuery;
+class NewsScreen extends StatelessWidget {
+  String sourcesQuery;
+
 
   NewsScreen({this.sourcesQuery});
 
   @override
-  State<StatefulWidget> createState() {
-    return NewsScreenState(sourcesQuery);
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('News'),
+          actions: <Widget>[
+            sourcesQuery == null ?
+            IconButton(
+              icon: Icon(Icons.list),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SourcesScreen()));
+              },
+              tooltip: "Sources",
+            ) : Container()
+          ],
+        ),
+        body: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[HeadlinesCarousel(), Expanded(child: NewsArticlesScreen(sourcesQuery: sourcesQuery,))]));
   }
 }
 
-class NewsScreenState extends State<NewsScreen> {
+class NewsArticlesScreen extends StatefulWidget {
+  final String sourcesQuery;
+
+  NewsArticlesScreen({this.sourcesQuery});
+
+  @override
+  State<StatefulWidget> createState() {
+    return NewsArticlesScreenState(sourcesQuery);
+  }
+}
+
+class NewsArticlesScreenState extends State<NewsArticlesScreen> {
   NewsAPI _newsAPI;
   List<Article> _news;
   ScrollController _scrollController;
@@ -28,7 +57,7 @@ class NewsScreenState extends State<NewsScreen> {
   TextEditingController _textController;
   String sourcesQuery;
 
-  NewsScreenState(this.sourcesQuery);
+  NewsArticlesScreenState(this.sourcesQuery);
 
   @override
   void initState() {
@@ -50,66 +79,39 @@ class NewsScreenState extends State<NewsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(sourcesQuery == null ? 'News' : 'News by $sourcesQuery'),
-          actions: <Widget>[
-            sourcesQuery == null
-                ? IconButton(
-                    icon: Icon(Icons.list),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SourcesScreen()));
-                    },
-                    tooltip: "Sources",
-                  )
-                : Container()
-          ],
-        ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            HeadlinesCarousel(),
-            Expanded(
-              child: FutureBuilder(
-                future: sourcesQuery == null
-                    ? _newsAPI.loadNewsByPage(_page)
-                    : _newsAPI.loadNewsByPageAndSource(_page, sourcesQuery),
-                builder: (context, snapshot) {
-                  if (snapshot.data != null &&
-                      snapshot.connectionState == ConnectionState.done) {
-                    _news.addAll(snapshot.data);
-                  }
-                  return _news != null && _news.isNotEmpty
-                      ? Column(
-                          children: <Widget>[
-                            Expanded(child: _buildListView()),
-                            Divider(
-                              height: 1.0,
-                            ),
-                            snapshot.hasError
-                                ? Container(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 4.0),
-                                    child: Text(snapshot.error.toString()))
-                                : Container(),
-                            buildSearchBar(_textController, (String text) {
-                              _submitQuery(text);
-                            }),
-                          ],
-                        )
-                      : snapshot.hasError
-                          ? _buildErrorRetry(snapshot.error.toString())
-                          : Center(
-                              child: CircularProgressIndicator(),
-                            );
-                },
-              ),
-            ),
-          ],
-        ));
+    return FutureBuilder(
+      future: sourcesQuery == null
+          ? _newsAPI.loadNewsByPage(_page)
+          : _newsAPI.loadNewsByPageAndSource(_page, sourcesQuery),
+      builder: (context, snapshot) {
+        if (snapshot.data != null &&
+            snapshot.connectionState == ConnectionState.done) {
+          _news.addAll(snapshot.data);
+        }
+        return _news != null && _news.isNotEmpty
+            ? Column(
+                children: <Widget>[
+                  Expanded(child: _buildListView()),
+                  Divider(
+                    height: 1.0,
+                  ),
+                  snapshot.hasError
+                      ? Container(
+                          padding: EdgeInsets.symmetric(vertical: 4.0),
+                          child: Text(snapshot.error.toString()))
+                      : Container(),
+                  buildSearchBar(_textController, (String text) {
+                    _submitQuery(text);
+                  }),
+                ],
+              )
+            : snapshot.hasError
+                ? _buildErrorRetry(snapshot.error.toString())
+                : Center(
+                    child: CircularProgressIndicator(),
+                  );
+      },
+    );
   }
 
   _submitQuery(String text) {
@@ -297,18 +299,19 @@ navigateToArticle(BuildContext context, Article article) {
       context, MaterialPageRoute(builder: (context) => ArticleScreen(article)));
 }
 
-buildImage(String imageUrl, double width, double height, {bool withOpacity = false}) {
+buildImage(String imageUrl, double width, double height,
+    {bool withOpacity = false}) {
   return Stack(
     children: <Widget>[
       CachedNetworkImage(
         imageUrl: imageUrl,
         placeholder: (context, url) => Center(
             child: Container(
-              child: Container(
-                child: CircularProgressIndicator(),
-                padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
-              ),
-            )),
+          child: Container(
+            child: CircularProgressIndicator(),
+            padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 8.0),
+          ),
+        )),
         errorWidget: (context, url, error) => Container(
           child: buildErrorIcon(),
           height: height,
@@ -317,12 +320,19 @@ buildImage(String imageUrl, double width, double height, {bool withOpacity = fal
         height: height,
         fit: BoxFit.cover,
       ),
-      withOpacity ? Container(color: Colors.black.withOpacity(0.7), width: width, height: height,) : Container()
+      withOpacity
+          ? Container(
+              color: Colors.black.withOpacity(0.7),
+              width: width,
+              height: height,
+            )
+          : Container()
     ],
   );
 }
 
-buildImageOrError(String imageUrl, double width, double height, {bool withOpacity = false}) {
+buildImageOrError(String imageUrl, double width, double height,
+    {bool withOpacity = false}) {
   return imageUrl != null
       ? buildImage(imageUrl, width, height, withOpacity: withOpacity)
       : Container(
