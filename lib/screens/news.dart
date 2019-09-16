@@ -12,7 +12,6 @@ import 'package:intl/intl.dart';
 class NewsScreen extends StatelessWidget {
   String sourcesQuery;
 
-
   NewsScreen({this.sourcesQuery});
 
   @override
@@ -21,20 +20,27 @@ class NewsScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text('News'),
           actions: <Widget>[
-            sourcesQuery == null ?
-            IconButton(
-              icon: Icon(Icons.list),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SourcesScreen()));
-              },
-              tooltip: "Sources",
-            ) : Container()
+            sourcesQuery == null
+                ? IconButton(
+                    icon: Icon(Icons.list),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SourcesScreen()));
+                    },
+                    tooltip: "Sources",
+                  )
+                : Container()
           ],
         ),
-        body: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[HeadlinesCarousel(), Expanded(child: NewsArticlesScreen(sourcesQuery: sourcesQuery,))]));
+        body: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          HeadlinesCarousel(),
+          Expanded(
+              child: NewsArticlesScreen(
+            sourcesQuery: sourcesQuery,
+          ))
+        ]));
   }
 }
 
@@ -172,27 +178,27 @@ class NewsArticlesScreenState extends State<NewsArticlesScreen> {
 
 class HeadlinesCarousel extends StatelessWidget {
   final NewsAPI _newsAPI = NewsAPI();
-  final List<Article> _headlines = <Article>[];
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _newsAPI.loadHeadlines(1),
       builder: (context, snapshot) {
+        var headlines = <Article>[];
         if (snapshot.data != null &&
             snapshot.connectionState == ConnectionState.done) {
-          _headlines.addAll(snapshot.data);
+          headlines = (snapshot.data);
         }
-        return _headlines != null && _headlines.isNotEmpty
+        return headlines != null && headlines.isNotEmpty
             ? Column(
                 children: <Widget>[
                   Container(
                       height: 100,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: _headlines.length,
+                          itemCount: headlines.length,
                           itemBuilder: (_, int index) {
-                            return ArticleHeadline(_headlines[index]);
+                            return ArticleHeadline(headlines[index]);
                           })),
                   Divider(
                     height: 1.0,
