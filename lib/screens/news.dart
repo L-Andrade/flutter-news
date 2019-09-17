@@ -205,7 +205,7 @@ class HeadlinesCarousel extends StatelessWidget {
                   ),
                   snapshot.hasError
                       ? Container(
-                          padding: EdgeInsets.symmetric(vertical: 4.0),
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
                           child: Text(snapshot.error.toString()))
                       : Container(),
                 ],

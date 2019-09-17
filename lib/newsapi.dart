@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -16,14 +15,16 @@ class NewsAPI {
 
   Future loadNewsByPage(int page) async {
     if (lastPage == page) return null;
-    var get = _url + "everything?q=$query&apiKey=$_apiKey&page=${page.toString()}&$_sortBy&sources=$sourcesQuery";
+    var get = _url +
+        "everything?q=$query&apiKey=$_apiKey&page=${page.toString()}&$_sortBy&sources=$sourcesQuery";
     List<Article> list = await articleRequest(get, page);
     return list;
   }
 
   Future<List<Article>> articleRequest(String get, int page) async {
     try {
-      http.Response response = await http.get(get, headers: {"Accept": "application/json"});
+      http.Response response =
+          await http.get(get, headers: {"Accept": "application/json"});
       print("${response.statusCode}: ${response.reasonPhrase}");
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
@@ -33,14 +34,15 @@ class NewsAPI {
       } else {
         throw Exception();
       }
-    } catch (ex){
+    } catch (ex) {
       print(ex);
       throw "Could not get articles from NewsAPI :(";
     }
   }
 
   Future loadHeadlines(int page) async {
-    var get = _url + "top-headlines?q=$query&apiKey=$_apiKey&page=${page.toString()}";
+    var get =
+        _url + "top-headlines?q=$query&apiKey=$_apiKey&page=${page.toString()}";
     List<Article> list = await articleRequest(get, 1);
     return list;
   }
@@ -49,16 +51,18 @@ class NewsAPI {
     var get = _url + "sources?apiKey=$_apiKey&category=$query";
     List<Source> list;
     try {
-      http.Response response = await http.get(get, headers: {"Accept": "application/json"});
+      http.Response response =
+          await http.get(get, headers: {"Accept": "application/json"});
       print("${response.statusCode}: ${response.reasonPhrase}");
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         var listJson = data["sources"] as List;
-        list = listJson.map<Source>((json) => Source.fromFullJson(json)).toList();
+        list =
+            listJson.map<Source>((json) => Source.fromFullJson(json)).toList();
       } else {
         throw Exception();
       }
-    } catch (ex){
+    } catch (ex) {
       throw "Could not get sources from NewsAPI :(";
     }
     return list;
@@ -69,7 +73,7 @@ class NewsAPI {
     query = text;
   }
 
-  resetPage(){
+  resetPage() {
     lastPage = -1;
   }
 
@@ -77,5 +81,4 @@ class NewsAPI {
     this.sourcesQuery = sourcesQuery;
     return loadNewsByPage(page);
   }
-
 }
